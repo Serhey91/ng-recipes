@@ -7,4 +7,11 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'recipe-book';
+  isRecipesShown: boolean = false;
+
+  constructor() {}
+
+  onRouteChanged(feature: string):void {
+    this.isRecipesShown = feature === 'recipe' ? true : false;
+  }
 }
