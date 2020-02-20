@@ -1,9 +1,12 @@
 <div class="row">
   <div class="">
-    <app-shopping-edit></app-shopping-edit>
+    <app-shopping-edit
+      (addingIngredient)="onAddingIngredient($event)"
+    ></app-shopping-edit
+      >
     <hr>
     <div class="col-12 list-group">
-      <a class="list-group-item" *ngFor='let i of ingredients'>{{i.name}} ({{i.amount}}{{i.units}})</a>
+      <a class="list-group-item" appHighlight [defaultColor]="'transparent'" [highlightColor]="'rgb(205, 100, 155)'" *ngFor='let i of ingredients'>{{i.name}} ({{i.amount}}{{i.units}})</a>
     </div>
   </div>
 </div>
