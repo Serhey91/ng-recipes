@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
-import { AppHeaderComponent } from './header/header.component';
+import { AppHeaderComponent } from './components/header/header.component';
 import { RecipesComponent } from './components/recipes/recipes.component';
 import { RecipeListComponent } from './components/recipes/recipe-list/recipe-list.component';
 import { RecipeDetailComponent } from './components/recipes/recipe-detail/recipe-detail.component';
@@ -12,6 +12,8 @@ import { ShoppingEditComponent } from './components/shopping-list/shopping-edit/
 import { IngridientHighlightDirective } from './directives/ingredient-highlight.directive';
 import { UnlessDirective } from './directives/unless.directive';
 import { DropdownDirective } from './directives/dropdown.directive';
+import { RecipeService } from './services/recipes/recipe.service';
+import { ShoppingListService } from './services/shopping-list/shopping-list.service';
 
 @NgModule({
   declarations: [
@@ -31,7 +33,7 @@ import { DropdownDirective } from './directives/dropdown.directive';
   imports: [
     BrowserModule
   ],
-  providers: [],
+  providers: [RecipeService, ShoppingListService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
