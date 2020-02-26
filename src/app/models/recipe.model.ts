@@ -7,6 +7,7 @@ export class Recipe {
 }
 
 export interface IRecipe {
+  id: number,
   name: string;
   description: string;
   imagePath: string;

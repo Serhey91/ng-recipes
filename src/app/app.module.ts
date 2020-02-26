@@ -14,6 +14,9 @@ import { UnlessDirective } from './directives/unless.directive';
 import { DropdownDirective } from './directives/dropdown.directive';
 import { RecipeService } from './services/recipes/recipe.service';
 import { ShoppingListService } from './services/shopping-list/shopping-list.service';
+import { AppRouningModule } from './app-routing.module';
+import { RecipeStartComponent } from './components/recipes/recipe-start/recipe-start.component';
+import { RecipeEditComponent } from './components/recipes/recipe-edit/recipe-edit.component';
 
 @NgModule({
   declarations: [
@@ -25,13 +28,16 @@ import { ShoppingListService } from './services/shopping-list/shopping-list.serv
     RecipeItemComponent,
     ShoppingListComponent,
     ShoppingEditComponent,
+    RecipeStartComponent,
     // Directives
     IngridientHighlightDirective,
     UnlessDirective,
-    DropdownDirective
+    DropdownDirective,
+    RecipeEditComponent
   ],
   imports: [
-    BrowserModule
+    BrowserModule,
+    AppRouningModule
   ],
   providers: [RecipeService, ShoppingListService],
   bootstrap: [AppComponent]
