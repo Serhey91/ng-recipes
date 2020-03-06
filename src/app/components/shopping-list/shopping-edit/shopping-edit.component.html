@@ -1,40 +1,60 @@
 <div class="row col-12">
-    <form autocomplete="off">
+    <form autocomplete="off" (ngSubmit)='onAddingIngrediend(shoppingForm)' #shoppingForm='ngForm'>
       <div class="row">
         <div class="col-sm-5 form-group">
           <label for="name">Name</label>
           <input
-            #nameInput
             type="text"
             id='name'
             class='form-control'
+            name="itemName"
+            ngModel
+            required
           >
         </div>
         <div class="col-sm-2 form-group">
           <label for="amount">Amount</label>
           <input
-            #amountInput
             type="number"
             id='amount'
             class='form-control'
+            name="itemAmount"
+            ngModel
+            required
+            pattern="^[1-9]+[0-9]*$"
             >
         </div>
         <div class="col-sm-3 form-group">
           <label for="units">Units</label>
           <input
-            #unitsInput
             type="test"
             id='units'
             class='form-control'
+            name="itemUnits"
+            ngModel
+            required
           >
         </div>
       </div>
-      <p *appUnless='wasAdded' class='alert alert-success'>You have added new file</p>
       <div class="row">
         <div class="col-12 form-group">
-        <button class='btn btn-success mr-2' type='button' (click)="onAddingIngrediend()">Add</button>
-        <button class='btn btn-danger mr-2' type='button'>Delete</button>
-        <button class='btn btn-primary' type='button' (click)="onResetIngredientDetails()">Clear</button>
+
+        <button
+          class='btn btn-success mr-2'
+          type='submit'
+          [disabled]='!shoppingForm.valid'
+        >{{isInEditingMode ? 'Update': 'Add'}}</button>
+        <button
+          *ngIf="isInEditingMode"
+          class='btn btn-danger mr-2'
+          type='button'
+          (click)='onDeleteIngredient()'
+        >Delete</button>
+        <button
+          class='btn btn-primary'
+          type='button'
+          (click)="onResetIngredientDetails()"
+        >Clear</button>
         </div>
       </div>
     </form>

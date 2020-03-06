@@ -2,7 +2,7 @@ import { Component, OnInit, Input, ElementRef, ViewChild } from '@angular/core';
 import { IRecipe } from 'src/app/models/recipe.model';
 import { ShoppingListService } from 'src/app/services/shopping-list/shopping-list.service';
 import { RecipeService } from 'src/app/services/recipes/recipe.service';
-import { Params, ActivatedRoute } from '@angular/router';
+import { Params, ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-recipe-detail',
@@ -12,15 +12,18 @@ import { Params, ActivatedRoute } from '@angular/router';
 export class RecipeDetailComponent implements OnInit {
   @ViewChild('dropdown', {static: true}) dropdownEl: ElementRef;
   private recipe: IRecipe;
+  private recipeId: number;
   constructor(
     private shoppingListService: ShoppingListService,
     private recipeService: RecipeService,
     private activateRoute: ActivatedRoute,
+    private router: Router
     ) { }
 
   ngOnInit() {
     this.activateRoute.params.subscribe((params: Params) => {
-      this.recipe = this.recipeService.getOneRecipe(+params.id)
+      this.recipe = this.recipeService.getOneRecipe(+params.id);
+      this.recipeId = +params['id'];
     })
   }
 
@@ -31,4 +34,8 @@ export class RecipeDetailComponent implements OnInit {
     this.dropdownEl.nativeElement.classList.remove('show');
   }
 
+  onDeleteRecipe() {
+    this.recipeService.deleteRecipe(this.recipeId);
+    this.router.navigate(['../'], {relativeTo: this.activateRoute})
+  }
 }

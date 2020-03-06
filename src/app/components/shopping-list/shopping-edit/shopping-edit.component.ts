@@ -1,41 +1,66 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { ShoppingListService } from 'src/app/services/shopping-list/shopping-list.service';
+import { NgForm } from '@angular/forms';
+import { Subscription } from 'rxjs';
+import { IIngredient } from 'src/app/models/ingredients.model';
 
 @Component({
   selector: 'app-shopping-edit',
   templateUrl: './shopping-edit.component.html',
   styleUrls: ['./shopping-edit.component.css']
 })
-export class ShoppingEditComponent implements OnInit {
-  @ViewChild('nameInput', {static: false}) nameInput: ElementRef;
-  @ViewChild('amountInput', {static: false}) amountInput: ElementRef;
-  @ViewChild('unitsInput', {static: false}) unitsInput: ElementRef;
+export class ShoppingEditComponent implements OnInit, OnDestroy {
+  @ViewChild('shoppingForm', {static: true}) shoppingForm: NgForm;
 
-  private wasAdded: boolean = false;
+  private editingSubscription: Subscription;
+  private isInEditingMode: boolean = false;
+  private editedItemIndex: number;
+  private editedIngredient: IIngredient;
+
   constructor(private shoppingListService: ShoppingListService) { }
 
+  private onResetIngredientDetails():void {
+    this.isInEditingMode = false;
+    this.shoppingForm.reset();
+  }
+
   ngOnInit() {
-  }
-
-  onAddingIngrediend():void {
-    this.shoppingListService.addingIngredient({
-      name: this.nameInput.nativeElement.value,
-      amount: this.amountInput.nativeElement.value,
-      units: this.unitsInput.nativeElement.value,
+    this.editingSubscription = this.shoppingListService.shoppingItemEditing
+    .subscribe((data: number) => {
+      this.isInEditingMode = true;
+      this.editedItemIndex = data;
+      this.editedIngredient = this.shoppingListService.getIngredient(data);
+      this.shoppingForm.setValue({
+        itemName: this.editedIngredient.name,
+        itemAmount: this.editedIngredient.amount,
+        itemUnits: this.editedIngredient.units,
+      })
     })
-
-    this.resetFormFields();
-    this.wasAdded = true;
-    setTimeout(() => this.wasAdded = false, 3000);
   }
 
-  onResetIngredientDetails():void {
-    this.resetFormFields();
+  onAddingIngrediend(form: NgForm):void {
+    const {value} = form;
+    const ingredient: IIngredient = {
+      name: value.itemName,
+      amount: value.itemAmount,
+      units: value.itemUnits
+    }
+    if (this.isInEditingMode) {
+      this.shoppingListService
+        .updateIngredient(this.editedItemIndex, ingredient)
+    } else {
+      this.shoppingListService.addingIngredient(ingredient)
+    }
+
+    this.onResetIngredientDetails();
   }
 
-  private resetFormFields():void {
-    this.nameInput.nativeElement.value = '';
-    this.amountInput.nativeElement.value = '';
-    this.unitsInput.nativeElement.value = '';
+  onDeleteIngredient() {
+    this.shoppingListService.deleteIngredient(this.editedItemIndex);
+    this.onResetIngredientDetails();
+  }
+
+  ngOnDestroy() {
+    this.editingSubscription.unsubscribe();
   }
 }

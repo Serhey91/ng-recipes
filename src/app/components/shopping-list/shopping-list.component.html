@@ -9,7 +9,8 @@
         appHighlight
         [defaultColor]="'transparent'"
         [highlightColor]="'rgb(205, 100, 155)'"
-        *ngFor='let i of ingredients'
+        *ngFor='let i of ingredients; let id = index'
+        (click)='onEditItem(id)'
       >{{i.name}} ({{i.amount}}{{i.units}})</a>
     </div>
   </div>

@@ -8,7 +8,7 @@
 </div>
 <div class="row">
   <div class="col-md-12">
-    <h2>{{recipe.name}}</h2>
+    <h2>{{recipe.name }}</h2>
   </div>
 </div>
 <div class="row">
@@ -28,14 +28,14 @@
       <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" #dropdown>
         <a class="dropdown-item" (click)='addIngredientsToShoppingList()'>Add Ingredients to Shopping List</a>
         <a class="dropdown-item" [routerLink]="['edit']">Edit Recipe</a>
-        <a class="dropdown-item" >Delete Recipe</a>
+        <a class="dropdown-item" (click)="onDeleteRecipe()">Delete Recipe</a>
       </div>
     </div>
   </div>
 </div>
 <div class="row">
   <div class="col-md-12">
-    <h4>{{recipe.description}}</h4>
+    <h4 class="mt-4 mb-4">{{recipe.description}}</h4>
   </div>
 </div>
 <div class="row">
