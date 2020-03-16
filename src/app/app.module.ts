@@ -19,7 +19,10 @@ import { RecipeStartComponent } from './components/recipes/recipe-start/recipe-s
 import { RecipeEditComponent } from './components/recipes/recipe-edit/recipe-edit.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { ShortenPipe } from './pipes/shorten.pipe';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthComponent } from './components/auth/auth.component';
+import { LoaderComponent } from './shared/loader/loader.component';
+import { AuthInterseptorService } from './services/auth/auth.interseptor.service';
 
 @NgModule({
   declarations: [
@@ -32,6 +35,8 @@ import { HttpClientModule } from '@angular/common/http';
     ShoppingListComponent,
     ShoppingEditComponent,
     RecipeStartComponent,
+    LoaderComponent,
+    AuthComponent,
     // Directives
     IngridientHighlightDirective,
     UnlessDirective,
@@ -47,7 +52,7 @@ import { HttpClientModule } from '@angular/common/http';
     ReactiveFormsModule,
     HttpClientModule
   ],
-  providers: [RecipeService, ShoppingListService],
+  providers: [RecipeService, ShoppingListService, {provide: HTTP_INTERCEPTORS, useClass: AuthInterseptorService, multi: true}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
