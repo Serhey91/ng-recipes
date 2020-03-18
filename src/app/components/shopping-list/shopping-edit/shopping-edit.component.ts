@@ -13,13 +13,13 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
   @ViewChild('shoppingForm', {static: true}) shoppingForm: NgForm;
 
   private editingSubscription: Subscription;
-  private isInEditingMode: boolean = false;
+  isInEditingMode: boolean = false;
   private editedItemIndex: number;
   private editedIngredient: IIngredient;
 
   constructor(private shoppingListService: ShoppingListService) { }
 
-  private onResetIngredientDetails():void {
+  onResetIngredientDetails():void {
     this.isInEditingMode = false;
     this.shoppingForm.reset();
   }

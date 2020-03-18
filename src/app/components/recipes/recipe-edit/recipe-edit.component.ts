@@ -13,8 +13,9 @@ import { IIngredient } from 'src/app/models/ingredients.model';
 export class RecipeEditComponent implements OnInit {
   private recipe: IRecipe;
   private editMode: boolean = false;
-  private recipeForm: FormGroup;
   private recipeId: number;
+
+  recipeForm: FormGroup;
   constructor(
     private activateRoute: ActivatedRoute,
     private recipesService: RecipeService,
@@ -28,6 +29,10 @@ export class RecipeEditComponent implements OnInit {
       this.initRecipe(params);
       this.initForm();
     })
+  }
+
+  get ingredientsControls() {
+    return (this.recipeForm.get('ingredients') as FormArray).controls;
   }
 
   private initForm() {

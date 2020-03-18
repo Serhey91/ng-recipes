@@ -1,8 +1,7 @@
+<ng-template appPlaceholder></ng-template>
 <div class="row">
   <div class="col-8 offset-2 mt-2">
-    <div class="alert alert-danger" *ngIf="authError">
-      <span>{{ authError }}</span>
-    </div>
+    <!-- <app-alert [message]='authError' *ngIf="authError" (closeAlert)="onHandleError()"></app-alert> -->
     <form
       *ngIf="!isLoading"
       #authForm='ngForm'
@@ -37,7 +36,7 @@
           [disabled]="authForm.invalid"
           class='btn btn-primary mr-3'
           type='submit'
-        >{{authString()}}</button>
+        >{{authString(false)}}</button>
         <button
           class='btn btn-warning'
           (click)="onSwitchMode()"

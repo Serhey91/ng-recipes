@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import { IIngredient } from 'src/app/models/ingredients.model';
 import { Subject } from 'rxjs';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class ShoppingListService {
   ingredientsChange: Subject<IIngredient[]> = new Subject<IIngredient[]>();
   shoppingItemEditing: Subject<number> = new Subject<number>();

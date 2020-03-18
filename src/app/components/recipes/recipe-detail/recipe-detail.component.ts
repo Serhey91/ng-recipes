@@ -11,7 +11,7 @@ import { Params, ActivatedRoute, Router } from '@angular/router';
 })
 export class RecipeDetailComponent implements OnInit {
   @ViewChild('dropdown', {static: true}) dropdownEl: ElementRef;
-  private recipe: IRecipe;
+  recipe: IRecipe;
   private recipeId: number;
   constructor(
     private shoppingListService: ShoppingListService,

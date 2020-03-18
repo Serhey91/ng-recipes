@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import { IRecipe } from 'src/app/models/recipe.model';
 import { Subject } from 'rxjs';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class RecipeService {
   private recipes: IRecipe[] = [];
 

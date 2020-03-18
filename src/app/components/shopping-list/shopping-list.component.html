@@ -2,13 +2,13 @@
   <div class="">
     <app-shopping-edit></app-shopping-edit
       >
-    <hr>
-    <div class="col-12 list-group">
-      <a
-        class="list-group-item"
-        appHighlight
+      <hr>
+      <div class="col-12 list-group">
+        <!-- appHighlight
         [defaultColor]="'transparent'"
-        [highlightColor]="'rgb(205, 100, 155)'"
+        [highlightColor]="'rgb(205, 100, 155)'" -->
+        <a
+        class="list-group-item"
         *ngFor='let i of ingredients; let id = index'
         (click)='onEditItem(id)'
       >{{i.name}} ({{i.amount}}{{i.units}})</a>

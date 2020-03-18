@@ -4,15 +4,16 @@ import { Observable, throwError, Subject, BehaviorSubject } from 'rxjs';
 import { IFirebaseAuthModel, UserFormData, User } from 'src/app/models/auth.model';
 import { catchError, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
-
+import { environment } from '../../../environments/environment';
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private AUTH_STRING_SIGNUP = "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=";
   private AUTH_STRING_SIGNIN = "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key="
-  private API_FIREBASE_KEY = "AIzaSyAJFibr-pnaLZ33XNmT0IUMawPlUPZhCKg";
+  // private API_FIREBASE_KEY = "AIzaSyAJFibr-pnaLZ33XNmT0IUMawPlUPZhCKg";
 
+  private tokenExpirationTimer: any;
   user$: BehaviorSubject<User> = new BehaviorSubject<User>(null);
 
   constructor(
@@ -22,7 +23,7 @@ export class AuthService {
   }
 
   signup(formData: UserFormData): Observable<IFirebaseAuthModel> {
-    return this.http.post<IFirebaseAuthModel>(`${this.AUTH_STRING_SIGNUP}${this.API_FIREBASE_KEY}`, {
+    return this.http.post<IFirebaseAuthModel>(`${this.AUTH_STRING_SIGNUP}${environment.FIREBASE_API_KEY}`, {
       email: formData.email,
       password: formData.password,
       returnSecureToken: true
@@ -32,7 +33,7 @@ export class AuthService {
   }
 
   login(formData: UserFormData): Observable<IFirebaseAuthModel> {
-    return this.http.post<IFirebaseAuthModel>(`${this.AUTH_STRING_SIGNIN}${this.API_FIREBASE_KEY}`, {
+    return this.http.post<IFirebaseAuthModel>(`${this.AUTH_STRING_SIGNIN}${environment.FIREBASE_API_KEY}`, {
       email: formData.email,
       password: formData.password,
       returnSecureToken: true
@@ -42,13 +43,13 @@ export class AuthService {
   }
 
   autoLogin() {
-    debugger
     const userDataJSON = localStorage.getItem('userData');
     if(!userDataJSON) return;
 
     const userData = JSON.parse(userDataJSON);
     const loadedUser = new User(userData.email, userData.id, userData._token, new Date(userData._tokenExpirationDate));
     if (loadedUser.token) {
+      this.autoLogout(new Date(userData._tokenExpirationDate).getTime() - new Date().getTime());
       this.user$.next(loadedUser);
     }
   }
@@ -56,6 +57,15 @@ export class AuthService {
   logout() {
     this.user$.next(null);
     this.router.navigate(['/auth']);
+    localStorage.removeItem('userData');
+    if (this.tokenExpirationTimer) {
+      clearTimeout(this.tokenExpirationTimer);
+    }
+    this.tokenExpirationTimer = null;
+  }
+
+  autoLogout(expirationDuration: number) {
+    this.tokenExpirationTimer = setTimeout(() => this.logout(), expirationDuration)
   }
 
   private mapError(errorData: HttpErrorResponse) {
@@ -84,6 +94,7 @@ export class AuthService {
     const expirationDate = new Date(new Date().getTime() + +expiresIn * 1000);
     const user = new User(email, localId, idToken, expirationDate);
     this.user$.next(user);
+    this.autoLogout(+expiresIn*1000);
     localStorage.setItem('userData', JSON.stringify(user));
   }
 }
