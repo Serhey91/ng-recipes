@@ -5,20 +5,24 @@ import { IFirebaseAuthModel, UserFormData, User } from 'src/app/models/auth.mode
 import { catchError, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
+import { Store } from '@ngrx/store';
+import { AppState } from 'src/app/components/store/app.reducer';
+import { LoginAction, LogoutAction } from 'src/app/components/auth/store/auth.actions';
+
 @Injectable({
   providedIn: 'root'
 })
+
 export class AuthService {
   private AUTH_STRING_SIGNUP = "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=";
   private AUTH_STRING_SIGNIN = "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key="
-  // private API_FIREBASE_KEY = "AIzaSyAJFibr-pnaLZ33XNmT0IUMawPlUPZhCKg";
 
   private tokenExpirationTimer: any;
-  user$: BehaviorSubject<User> = new BehaviorSubject<User>(null);
 
   constructor(
     private http: HttpClient,
-    private router: Router
+    private router: Router,
+    private store: Store<AppState>
   ) {
   }
 
@@ -50,12 +54,12 @@ export class AuthService {
     const loadedUser = new User(userData.email, userData.id, userData._token, new Date(userData._tokenExpirationDate));
     if (loadedUser.token) {
       this.autoLogout(new Date(userData._tokenExpirationDate).getTime() - new Date().getTime());
-      this.user$.next(loadedUser);
+      this.store.dispatch(new LoginAction(loadedUser));
     }
   }
 
   logout() {
-    this.user$.next(null);
+    this.store.dispatch(new LogoutAction());
     this.router.navigate(['/auth']);
     localStorage.removeItem('userData');
     if (this.tokenExpirationTimer) {
@@ -93,7 +97,7 @@ export class AuthService {
   private mapAuth({email, localId, idToken, expiresIn}: IFirebaseAuthModel) {
     const expirationDate = new Date(new Date().getTime() + +expiresIn * 1000);
     const user = new User(email, localId, idToken, expirationDate);
-    this.user$.next(user);
+    this.store.dispatch(new LoginAction(user));
     this.autoLogout(+expiresIn*1000);
     localStorage.setItem('userData', JSON.stringify(user));
   }

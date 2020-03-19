@@ -3,6 +3,9 @@ import { ShoppingListService } from 'src/app/services/shopping-list/shopping-lis
 import { NgForm } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { IIngredient } from 'src/app/models/ingredients.model';
+import { Store } from '@ngrx/store';
+import { SHOPPING_LIST_ACTIONS, AddIngridient } from '../store/shopping-list.actions';
+import { AppState } from '../../store/app.reducer';
 
 @Component({
   selector: 'app-shopping-edit',
@@ -12,12 +15,14 @@ import { IIngredient } from 'src/app/models/ingredients.model';
 export class ShoppingEditComponent implements OnInit, OnDestroy {
   @ViewChild('shoppingForm', {static: true}) shoppingForm: NgForm;
 
-  private editingSubscription: Subscription;
   isInEditingMode: boolean = false;
-  private editedItemIndex: number;
+  private shopListSubscription: Subscription;
   private editedIngredient: IIngredient;
 
-  constructor(private shoppingListService: ShoppingListService) { }
+  constructor(
+    private shoppingListService: ShoppingListService,
+    private store: Store<AppState>
+  ) { }
 
   onResetIngredientDetails():void {
     this.isInEditingMode = false;
@@ -25,16 +30,19 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.editingSubscription = this.shoppingListService.shoppingItemEditing
-    .subscribe((data: number) => {
-      this.isInEditingMode = true;
-      this.editedItemIndex = data;
-      this.editedIngredient = this.shoppingListService.getIngredient(data);
-      this.shoppingForm.setValue({
-        itemName: this.editedIngredient.name,
-        itemAmount: this.editedIngredient.amount,
-        itemUnits: this.editedIngredient.units,
-      })
+    this.shopListSubscription = this.shoppingListService.getIngredients()
+    .subscribe((data) => {
+      if (data.editedIngredientIndex > -1) {
+        this.editedIngredient = data.editedIngredient;
+        this.isInEditingMode = true;
+        this.shoppingForm.setValue({
+          itemName: this.editedIngredient.name,
+          itemAmount: this.editedIngredient.amount,
+          itemUnits: this.editedIngredient.units,
+        })
+      } else {
+        this.isInEditingMode = false;
+      }
     })
   }
 
@@ -46,8 +54,7 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
       units: value.itemUnits
     }
     if (this.isInEditingMode) {
-      this.shoppingListService
-        .updateIngredient(this.editedItemIndex, ingredient)
+      this.shoppingListService.updateIngredient(ingredient)
     } else {
       this.shoppingListService.addingIngredient(ingredient)
     }
@@ -56,11 +63,12 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
   }
 
   onDeleteIngredient() {
-    this.shoppingListService.deleteIngredient(this.editedItemIndex);
+    this.shoppingListService.deleteIngredient();
     this.onResetIngredientDetails();
   }
 
   ngOnDestroy() {
-    this.editingSubscription.unsubscribe();
+    this.shoppingListService.stopEditing();
+    this.shopListSubscription.unsubscribe();
   }
 }

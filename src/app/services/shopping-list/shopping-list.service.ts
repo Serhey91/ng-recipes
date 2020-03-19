@@ -1,46 +1,44 @@
 import { Injectable } from '@angular/core';
 import { IIngredient } from 'src/app/models/ingredients.model';
-import { Subject } from 'rxjs';
+import { Observable } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { AddMultiplyIngredients, AddIngridient, UpdateIngredient, DeleteIngredient, StartEdit, StopEdit } from 'src/app/components/shopping-list/store/shopping-list.actions';
+import { State } from 'src/app/components/shopping-list/store/shopping-list.reducer';
+import { AppState } from 'src/app/components/store/app.reducer';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ShoppingListService {
-  ingredientsChange: Subject<IIngredient[]> = new Subject<IIngredient[]>();
-  shoppingItemEditing: Subject<number> = new Subject<number>();
-
-  private ingredients: IIngredient[] = []
-  constructor() {}
+  constructor(
+    private store: Store<AppState>
+  ) {}
 
   addingIngredient(newIngredient: IIngredient):void {
-    this.ingredients.push(newIngredient);
-    this.ingredientsObserve();
+    this.store.dispatch(new AddIngridient(newIngredient));
   }
 
   addingIngredients(ingredients: IIngredient[]):void {
-    this.ingredients.push(...ingredients);
-    this.ingredientsObserve();
+    this.store.dispatch(new AddMultiplyIngredients(ingredients));
   }
 
-  getIngredients():IIngredient[] {
-    return [...this.ingredients];
+  getIngredients(): Observable<State> {
+    return this.store.select('shoppingList');
   }
 
-  getIngredient(index: number): IIngredient {
-    return this.ingredients[index];
+  updateIngredient(ingredient: IIngredient): void {
+    this.store.dispatch(new UpdateIngredient({ingredient}))
   }
 
-  updateIngredient(index: number, ingredient: IIngredient): void {
-    this.ingredients[index] = ingredient;
-    this.ingredientsObserve();
+  deleteIngredient(): void {
+    this.store.dispatch(new DeleteIngredient());
   }
 
-  deleteIngredient(index): void {
-    this.ingredients.splice(index, 1);
-    this.ingredientsObserve();
+  startEditing(index: number): void {
+    this.store.dispatch(new StartEdit(index));
   }
 
-  private ingredientsObserve() {
-    this.ingredientsChange.next([...this.ingredients]);
+  stopEditing():void {
+    this.store.dispatch(new StopEdit());
   }
 }

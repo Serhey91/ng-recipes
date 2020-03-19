@@ -1,8 +1,11 @@
-import { Component, OnInit, Input, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, ElementRef, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { IRecipe } from 'src/app/models/recipe.model';
 import { ShoppingListService } from 'src/app/services/shopping-list/shopping-list.service';
 import { RecipeService } from 'src/app/services/recipes/recipe.service';
 import { Params, ActivatedRoute, Router } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { IIngredient } from 'src/app/models/ingredients.model';
+import { AddMultiplyIngredients } from '../../shopping-list/store/shopping-list.actions';
 
 @Component({
   selector: 'app-recipe-detail',
@@ -17,7 +20,7 @@ export class RecipeDetailComponent implements OnInit {
     private shoppingListService: ShoppingListService,
     private recipeService: RecipeService,
     private activateRoute: ActivatedRoute,
-    private router: Router
+    private router: Router,
     ) { }
 
   ngOnInit() {
@@ -28,14 +31,12 @@ export class RecipeDetailComponent implements OnInit {
   }
 
   addIngredientsToShoppingList() {
-    this.recipe.ingredients.forEach(ingredient => {
-      this.shoppingListService.addingIngredient(ingredient);
-    });
+    this.shoppingListService.addingIngredients(this.recipe.ingredients);
     this.dropdownEl.nativeElement.classList.remove('show');
   }
 
   onDeleteRecipe() {
     this.recipeService.deleteRecipe(this.recipeId);
-    this.router.navigate(['../'], {relativeTo: this.activateRoute})
+    this.router.navigate(['../'], {relativeTo: this.activateRoute});
   }
 }

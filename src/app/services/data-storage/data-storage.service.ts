@@ -5,7 +5,6 @@ import { RecipeService } from '../recipes/recipe.service';
 import { Observable } from 'rxjs';
 import { map, tap, take, exhaust, exhaustMap } from 'rxjs/operators';
 import { AuthService } from '../auth/auth.service';
-
 @Injectable({providedIn: 'root'})
 export class DataStorageService {
   private DB_URL: string = 'https://ng-recipe-book-7f78a.firebaseio.com/recipes.json'

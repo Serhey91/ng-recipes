@@ -9,6 +9,9 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthComponent } from './components/auth/auth.component';
 import { AuthInterseptorService } from './services/auth/auth.interseptor.service';
 import { SharedModule } from './shared/shared.module';
+import { StoreModule } from '@ngrx/store';
+
+import { appReducer } from './components/store/app.reducer';
 
 @NgModule({
   declarations: [
@@ -23,6 +26,7 @@ import { SharedModule } from './shared/shared.module';
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
+    StoreModule.forRoot(appReducer)
   ],
   providers: [
     {
