@@ -1,9 +1,5 @@
 import {
   SHOPPING_LIST_ACTIONS,
-  AddIngridient,
-  AddMultiplyIngredients,
-  UpdateIngredient,
-  DeleteIngredient,
   ShoppingListActionType
 } from './shopping-list.actions';
 import { IIngredient } from 'src/app/models/ingredients.model';

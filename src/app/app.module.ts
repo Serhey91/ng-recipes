@@ -10,8 +10,11 @@ import { AuthComponent } from './components/auth/auth.component';
 import { AuthInterseptorService } from './services/auth/auth.interseptor.service';
 import { SharedModule } from './shared/shared.module';
 import { StoreModule } from '@ngrx/store';
+import { EffectsModule } from '@ngrx/effects';
 
 import { appReducer } from './components/store/app.reducer';
+import { AuthEffects } from './components/auth/store/auth.effects';
+import { RecipeEffects } from './components/recipes/store/recipes.effects';
 
 @NgModule({
   declarations: [
@@ -26,7 +29,8 @@ import { appReducer } from './components/store/app.reducer';
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
-    StoreModule.forRoot(appReducer)
+    StoreModule.forRoot(appReducer),
+    EffectsModule.forRoot([AuthEffects, RecipeEffects]),
   ],
   providers: [
     {

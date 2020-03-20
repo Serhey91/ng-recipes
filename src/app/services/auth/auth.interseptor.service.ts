@@ -8,7 +8,6 @@ import { AppState } from 'src/app/components/store/app.reducer';
 @Injectable()
 export class AuthInterseptorService implements HttpInterceptor {
   constructor(
-    private authService: AuthService,
     private store: Store<AppState>
     ) {
 

@@ -1,35 +1,40 @@
-import { Component, OnDestroy, ComponentFactoryResolver, ViewChild } from "@angular/core";
+import { Component, OnDestroy, ComponentFactoryResolver, ViewChild, OnInit } from "@angular/core";
 import { NgForm } from '@angular/forms';
-import { AuthService } from 'src/app/services/auth/auth.service';
-import { IFirebaseAuthModel } from 'src/app/models/auth.model';
-import { Subscription, Observable } from 'rxjs';
-import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { AlertComponent } from '../../shared/alert/alert.component';
 import { PlaceholderDirective } from 'src/app/directives/placeholder.directive';
+import { Store } from '@ngrx/store';
+import { AppState } from '../store/app.reducer';
+import { LoginStartAction, SignupStartAction } from './store/auth.actions';
 
 @Component({
   selector: 'app-auth',
   styleUrls: ['./auth.component.css'],
   templateUrl: './auth.component.html'
 })
-export class AuthComponent implements OnDestroy {
+export class AuthComponent implements OnInit, OnDestroy {
   isLoginMode: boolean;
   isLoading: boolean;
-  // authError: string = null;
-  private authSubs: Subscription;
   private closeAlertSubj: Subscription;
   @ViewChild(PlaceholderDirective, {static: true}) alertHost: PlaceholderDirective;
   constructor(
-    private authService: AuthService,
-    private router: Router,
-    private componentFactory: ComponentFactoryResolver
+    private componentFactory: ComponentFactoryResolver,
+    private store: Store<AppState>
   ) {
     this.isLoginMode = false;
     this.isLoading = false;
   }
 
+  ngOnInit() {
+    this.store.select('auth').subscribe(({isLoading, authError}) => {
+      this.isLoading = isLoading;
+      if (authError) {
+        this.showErrorAlert(authError);
+      }
+    })
+  }
+
   onSwitchMode() {
-    // this.authError = null;
     this.isLoginMode = !this.isLoginMode;
   }
 
@@ -38,37 +43,17 @@ export class AuthComponent implements OnDestroy {
   }
 
   onSubmit(form: NgForm) {
-    this.isLoading = true;
-    // this.authError = null;
-    if (!form.valid) {
-      return;
-    }
+    if (!form.valid) return;
 
     const params = {
       email: form.value.email,
       password: form.value.password
     }
 
-    let authObservable: Observable<IFirebaseAuthModel>;
-    authObservable = this.isLoginMode ? this.authService.login(params) : this.authService.signup(params);
-
-    this.authSubs = authObservable.subscribe((response: IFirebaseAuthModel) => {
-      form.reset();
-      this.isLoading = false;
-      this.router.navigate(['/recipes'])
-    }, (errorMessage: string) => {
-      // this.authError = errorMessage;
-      this.showErrorAlert(errorMessage);
-      this.isLoading = false;
-    })
-  }
-
-  onHandleError() {
-    // this.authError = null;
+    this.isLoginMode ? this.store.dispatch(new LoginStartAction(params)) : this.store.dispatch(new SignupStartAction(params));
   }
 
   ngOnDestroy() {
-    if (this.authSubs) this.authSubs.unsubscribe();
     if (this.closeAlertSubj) this.closeAlertSubj.unsubscribe();
   }
 

@@ -5,12 +5,8 @@ import { RecipeItemComponent } from './recipe-list/recipe-item/recipe-item.compo
 import { RecipeDetailComponent } from './recipe-detail/recipe-detail.component';
 import { RecipeListComponent } from './recipe-list/recipe-list.component';
 import { RecipeEditComponent } from './recipe-edit/recipe-edit.component';
-import { RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
-import { ShortenPipe } from 'src/app/pipes/shorten.pipe';
 import { RecipesRoutingModule } from './recipes-routing.module';
-import { DropdownDirective } from 'src/app/directives/dropdown.directive';
 import { SharedModule } from 'src/app/shared/shared.module';
 
 @NgModule({

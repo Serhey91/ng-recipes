@@ -1,26 +1,35 @@
 import { Injectable } from '@angular/core';
 import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { IRecipe } from 'src/app/models/recipe.model';
-import { Observable } from 'rxjs';
-import { DataStorageService } from '../data-storage/data-storage.service';
-import { RecipeService } from '../recipes/recipe.service';
+import { of } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { AppState } from 'src/app/components/store/app.reducer';
+import { FetchRecipesAction, RECIPES_ACTIONS, SetRecipesAction } from 'src/app/components/recipes/store/recipes.action';
+import { Actions, ofType } from '@ngrx/effects';
+import { take, map, switchMap } from 'rxjs/operators';
 
 @Injectable({providedIn: 'root'})
 export class RecipesResolverService implements Resolve<IRecipe[]>{
   constructor(
-    private dataStorage: DataStorageService,
-    private recipesService: RecipeService
+    private store: Store<AppState>,
+    private actions$: Actions
   ) {
 
   }
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot):
-   Observable<IRecipe[]> | Promise<IRecipe[]> | IRecipe[]
-   {
-     const recipes = this.recipesService.getRecipes();
-     if (recipes.length === 0) {
-       return this.dataStorage.fetchRecipes();
-     }
-
-     return recipes;
+  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+    return this.store.select('recipes').pipe(
+      take(1),
+      map(({recipes}) => recipes),
+      switchMap(recipes => {
+        if (recipes.length === 0) {
+          this.store.dispatch(new FetchRecipesAction());
+          return this.actions$.pipe(
+            ofType(RECIPES_ACTIONS.SET_RECIPES),
+            take(1),
+            map(data => (data as SetRecipesAction).payload)
+          )
+        } else return of(recipes);
+      })
+    )
    }
 }

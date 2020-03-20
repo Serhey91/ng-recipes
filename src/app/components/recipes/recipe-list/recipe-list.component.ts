@@ -1,26 +1,22 @@
-import { Component, OnInit, Output, EventEmitter, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { IRecipe } from 'src/app/models/recipe.model';
-import { RecipeService } from 'src/app/services/recipes/recipe.service';
-import { Subscription } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { AppState } from '../../store/app.reducer';
 
 @Component({
   selector: 'app-recipe-list',
   templateUrl: './recipe-list.component.html',
   styleUrls: ['./recipe-list.component.css']
 })
-export class RecipeListComponent implements OnInit, OnDestroy {
-  private recipesSubscription: Subscription;
+export class RecipeListComponent implements OnInit {
   recipes: IRecipe[] = [];
 
-  constructor(private recipeService: RecipeService) { }
+  constructor(
+    private store: Store<AppState>) { }
 
   ngOnInit() {
-    this.recipes = this.recipeService.getRecipes();
-    this.recipesSubscription = this.recipeService.recipesSubject.subscribe((recipes: IRecipe[]) => {
+    this.store.select('recipes').subscribe(({recipes}) => {
       this.recipes = recipes;
-    })
-  }
-  ngOnDestroy() {
-    this.recipesSubscription.unsubscribe();
+    });
   }
 }

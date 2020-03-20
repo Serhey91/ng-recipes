@@ -47,4 +47,4 @@ export type ShoppingListActionType = AddIngridient &
                                     UpdateIngredient &
                                     DeleteIngredient &
                                     StartEdit &
-                                    StopEdit
+                                    StopEdit;

@@ -1,9 +1,9 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef } from "@angular/core";
-import { DataStorageService } from 'src/app/services/data-storage/data-storage.service';
-import { AuthService } from 'src/app/services/auth/auth.service';
 import { Subscription } from 'rxjs';
 import { AppState } from '../store/app.reducer';
 import { Store } from '@ngrx/store';
+import { LogoutAction } from '../auth/store/auth.actions';
+import { FetchRecipesAction, StoreRecipesAction } from '../recipes/store/recipes.action';
 
 @Component({
   templateUrl: './header.component.html',
@@ -18,8 +18,6 @@ export class AppHeaderComponent implements OnInit, OnDestroy {
 
   isAuthenticated: boolean;
   constructor(
-    private dataStorage: DataStorageService,
-    private authService: AuthService,
     private ref: ChangeDetectorRef,
     private store: Store<AppState>
     ) {
@@ -34,17 +32,17 @@ export class AppHeaderComponent implements OnInit, OnDestroy {
   }
 
   onSaveData() {
-    this.dataStorage.storeRecipes();
+    this.store.dispatch(new StoreRecipesAction());
     this.dropdownEl.nativeElement.classList.remove('show');
   }
 
   onFetchData() {
-    this.dataStorage.fetchRecipes().subscribe();
+    this.store.dispatch(new FetchRecipesAction());
     this.dropdownEl.nativeElement.classList.remove('show');
   }
 
   onLogout() {
-    this.authService.logout();
+    this.store.dispatch(new LogoutAction());
   }
 
   ngOnDestroy() {

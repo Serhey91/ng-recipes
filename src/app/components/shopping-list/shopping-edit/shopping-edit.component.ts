@@ -1,11 +1,8 @@
-import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { ShoppingListService } from 'src/app/services/shopping-list/shopping-list.service';
 import { NgForm } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { IIngredient } from 'src/app/models/ingredients.model';
-import { Store } from '@ngrx/store';
-import { SHOPPING_LIST_ACTIONS, AddIngridient } from '../store/shopping-list.actions';
-import { AppState } from '../../store/app.reducer';
 
 @Component({
   selector: 'app-shopping-edit',
@@ -21,7 +18,6 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
 
   constructor(
     private shoppingListService: ShoppingListService,
-    private store: Store<AppState>
   ) { }
 
   onResetIngredientDetails():void {
