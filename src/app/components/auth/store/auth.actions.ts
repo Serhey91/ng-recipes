@@ -14,7 +14,7 @@ export class AuthenticateSuccessAction implements Action {
   readonly type = AUTH_ACTIONS.AUTHENTICATE_SUCCESS;
   constructor(public payload: User) {
   }
-}
+};
 
 export class AuthenticateFailAction implements Action {
   readonly type = AUTH_ACTIONS.AUTHENTICATE_FAIL;
