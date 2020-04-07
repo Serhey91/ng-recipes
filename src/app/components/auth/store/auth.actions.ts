@@ -20,7 +20,7 @@ export class AuthenticateFailAction implements Action {
   readonly type = AUTH_ACTIONS.AUTHENTICATE_FAIL;
   constructor(public payload: string) {
   }
-}
+};
 
 export class LogoutAction implements Action {
   readonly type = AUTH_ACTIONS.LOGOUT;
