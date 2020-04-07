@@ -8,7 +8,7 @@ export const AUTH_ACTIONS = {
   AUTHENTICATE_SUCCESS: 'AUTHENTICATE_SUCCESS',
   SIGN_UP_START: 'SIGN_UP_START',
   AUTO_LOGIN: 'AUTO_LOGIN'
-}
+};
 
 export class AuthenticateSuccessAction implements Action {
   readonly type = AUTH_ACTIONS.AUTHENTICATE_SUCCESS;
