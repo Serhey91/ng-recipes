@@ -24,7 +24,7 @@ export class AuthenticateFailAction implements Action {
 
 export class LogoutAction implements Action {
   readonly type = AUTH_ACTIONS.LOGOUT;
-}
+};
 
 export class LoginStartAction implements Action {
   readonly type = AUTH_ACTIONS.LOGIN_START;
